@@ -1,0 +1,25 @@
+{
+  "name": "perpustakaan-online-server",
+  "version": "1.0.0",
+  "description": "Bagian server dari webiste perpustakaan online",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arielariadi/perpustakaan-online-server.git"
+  },
+  "author": "Muhammad Ariel Ariadi, Rival, Mahbub Ahwani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arielariadi/perpustakaan-online-server/issues"
+  },
+  "homepage": "https://github.com/arielariadi/perpustakaan-online-server#readme",
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
