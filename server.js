@@ -11,6 +11,9 @@ import corsOptions from './config/corsOptions.js';
 import rootRoute from './routes/root.js';
 
 dotenv.config();
+
+console.log(process.env.NODE_ENV);
+
 const app = express();
 const PORT = process.env.PORT || 3500;
 
