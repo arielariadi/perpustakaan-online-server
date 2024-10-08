@@ -20,32 +20,68 @@ const getBooks = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc Get a single book
+// @route GET /v1/books/:id
+// @access Public
+const getSingleBook = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid ID!' });
+  }
+
+  const book = await Book.findById(id).lean();
+
+  if (!book) {
+    return res.status(400).json({ message: 'Book not found!' });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Book fetched successfully',
+    data: book,
+  });
+});
+
 // @desc Create a new book
 // @route POST /v1/create-book
 // @access Public
 const createNewBook = asyncHandler(async (req, res) => {
   const { title, author, genre, year, description } = req.body;
 
+  if (!req.file) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Image is required!',
+    });
+  }
+
   // Ambil nama file dari req.file
   const image = req.file.path.replace(/^.*[\\\/]/, '');
   const relativeImagePath = `images/bookImages/${image}`; // Jalur relatif untuk gambar
 
   // Confirm data
-  if (
-    !title ||
-    !author ||
-    !genre ||
-    !year ||
-    !description ||
-    !relativeImagePath
-  ) {
+  if (!title || !author || !genre || !year || !description) {
     return res.status(400).json({
       status: 'fail',
       message: 'All fields are required!',
     });
   }
 
-  // Check for duplicate title
+  // Validasi year sebagai angka
+  const yearAsNumber = Number(year);
+  if (
+    isNaN(yearAsNumber) ||
+    yearAsNumber < 1000 ||
+    yearAsNumber > new Date().getFullYear()
+  ) {
+    return res.status(400).json({
+      status: 'fail',
+      message: ' Year must be a valid year!',
+    });
+  }
+
+  // Cek untuk duplikat title
   const duplicateTitle = await Book.findOne({ title }).lean().exec();
   if (duplicateTitle) {
     return res.status(409).json({
@@ -59,7 +95,7 @@ const createNewBook = asyncHandler(async (req, res) => {
     title,
     author,
     genre,
-    year,
+    year: yearAsNumber,
     description,
     image: relativeImagePath,
   });
@@ -78,4 +114,4 @@ const createNewBook = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBooks, createNewBook };
+export { getBooks, createNewBook, getSingleBook };
