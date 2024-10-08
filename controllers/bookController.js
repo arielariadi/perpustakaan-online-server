@@ -20,4 +20,62 @@ const getBooks = asyncHandler(async (req, res) => {
   });
 });
 
-export { getBooks };
+// @desc Create a new book
+// @route POST /v1/create-book
+// @access Public
+const createNewBook = asyncHandler(async (req, res) => {
+  const { title, author, genre, year, description } = req.body;
+
+  // Ambil nama file dari req.file
+  const image = req.file.path.replace(/^.*[\\\/]/, '');
+  const relativeImagePath = `images/bookImages/${image}`; // Jalur relatif untuk gambar
+
+  // Confirm data
+  if (
+    !title ||
+    !author ||
+    !genre ||
+    !year ||
+    !description ||
+    !relativeImagePath
+  ) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'All fields are required!',
+    });
+  }
+
+  // Check for duplicate title
+  const duplicateTitle = await Book.findOne({ title }).lean().exec();
+  if (duplicateTitle) {
+    return res.status(409).json({
+      status: 'fail',
+      message: 'Title already exists!',
+    });
+  }
+
+  // Create and store a new book
+  const book = await Book.create({
+    title,
+    author,
+    genre,
+    year,
+    description,
+    image: relativeImagePath,
+  });
+
+  if (book) {
+    return res.status(201).json({
+      status: 'success',
+      message: 'Book created successfully!',
+      data: book,
+    });
+  } else {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Invalid book data received!',
+    });
+  }
+});
+
+export { getBooks, createNewBook };
