@@ -1,3 +1,6 @@
 node_modules
 .env
 logs
+
+public/images/bookImages/*
+!public/images/bookImages/.gitkeep
