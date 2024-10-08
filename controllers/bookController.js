@@ -114,4 +114,36 @@ const createNewBook = asyncHandler(async (req, res) => {
   }
 });
 
-export { getBooks, createNewBook, getSingleBook };
+// @desc Update a book
+// @route PATCH /v1/books/:id
+// @access Public
+const updateBook = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid ID!' });
+  }
+
+  const updateData = { ...req.body };
+
+  // Jika ada gambar baru, ambil pathnya
+  if (req.file) {
+    updateData.image = `images/bookImages/${req.file.filename}`;
+  }
+
+  const book = await Book.findOneAndUpdate({ _id: id }, updateData, {
+    new: true,
+  });
+
+  if (!book) {
+    return res.status(400).json({ message: 'Book not found!' });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Book updated successfully',
+    data: book,
+  });
+});
+
+export { getBooks, getSingleBook, createNewBook, updateBook };
