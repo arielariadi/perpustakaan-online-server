@@ -2,12 +2,19 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { logger } from './middleware/logger.js';
+import errorHandler from './middleware/errorHandle.js';
+import cookieParser from 'cookie-parser';
 
 import rootRoute from './routes/root.js';
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3500;
+
+app.use(logger);
+app.use(express.json());
+app.use(cookieParser());
 
 // Static Files
 const __filename = fileURLToPath(import.meta.url);
@@ -27,5 +34,7 @@ app.all('*', (req, res) => {
     res.type('txt').send('404 Not Found');
   }
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
