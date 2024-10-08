@@ -11,6 +11,7 @@ import connectDB from './config/dbConn.js';
 import mongoose from 'mongoose';
 
 import rootRoute from './routes/root.js';
+import bookRoute from './routes/book.js';
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/', rootRoute);
+app.use('/v1', bookRoute);
 
 app.all('*', (req, res) => {
   res.status(404);
