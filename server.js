@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import { logger } from './middleware/logger.js';
 import errorHandler from './middleware/errorHandle.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import corsOptions from './config/corsOptions.js';
 
 import rootRoute from './routes/root.js';
 
@@ -13,6 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3500;
 
 app.use(logger);
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
