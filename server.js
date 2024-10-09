@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { logEvents, logger } from './middleware/logger.js';
+// import { logEvents, logger } from './middleware/logger.js';
 import errorHandler from './middleware/errorHandle.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -53,10 +53,10 @@ mongoose.connection.once('open', () => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
 
-mongoose.connection.on('error', (err) => {
-  console.log(err);
-  logEvents(
-    `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
-    'mongoErrLog.log',
-  );
-});
+// mongoose.connection.on('error', (err) => {
+//   console.log(err);
+//   logEvents(
+//     `${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`,
+//     'mongoErrLog.log',
+//   );
+// });
