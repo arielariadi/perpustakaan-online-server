@@ -16,8 +16,12 @@
       "dest": "/server.js"
     },
     {
-      "src": "/(.+\\.[a-z]+)$",
-      "dest": "/public/$1"
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/images/bookImages/(.*)",
+      "dest": "/public/images/bookImages/$1"
     }
   ]
 }
