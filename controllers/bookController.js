@@ -2,6 +2,7 @@ import Book from '../models/bookModel.js';
 
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
+import cloudinary from '../utils/cloudinary.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -59,11 +60,23 @@ const createNewBook = asyncHandler(async (req, res) => {
     });
   }
 
-  // Ambil nama file dari req.file
-  const image = req.file.path.replace(/^.*[\\\/]/, '');
-  const relativeImagePath = `images/bookImages/${image}`; // Jalur relatif untuk gambar
+  // Upload gambar ke Cloudinary
+  let imageUrl;
+  try {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'images/bookImages',
+      resource_type: 'image', // Hanya file gambar yang diperbolehkan
+    });
+    imageUrl = result.secure_url; // Dapatkan URL gambar dari hasil upload
+  } catch (error) {
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Failed to upload image to Cloudinary!',
+      error: error.message,
+    });
+  }
 
-  // Confirm data
+  // Validasi data
   if (!title || !author || !genre || !year || !description) {
     return res.status(400).json({
       status: 'fail',
@@ -80,7 +93,7 @@ const createNewBook = asyncHandler(async (req, res) => {
   ) {
     return res.status(400).json({
       status: 'fail',
-      message: ' Year must be a valid year!',
+      message: 'Year must be a valid year!',
     });
   }
 
@@ -100,7 +113,7 @@ const createNewBook = asyncHandler(async (req, res) => {
     genre,
     year: yearAsNumber,
     description,
-    image: relativeImagePath,
+    image: imageUrl, // Simpan URL gambar yang di-upload
   });
 
   if (book) {

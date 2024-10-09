@@ -18,6 +18,7 @@
     "url": "https://github.com/arielariadi/perpustakaan-online-server/issues"
   },
   "dependencies": {
+    "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "date-fns": "^4.1.0",
