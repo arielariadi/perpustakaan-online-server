@@ -10,13 +10,4 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Verifikasi konfigurasi
-console.log('Cloudinary Configuration:');
-console.log('Cloud Name:', cloudinary.config().cloud_name);
-console.log('API Key:', cloudinary.config().api_key);
-console.log(
-  'API Secret:',
-  cloudinary.config().api_secret ? '[REDACTED]' : 'Not set',
-);
-
 export default cloudinary;
