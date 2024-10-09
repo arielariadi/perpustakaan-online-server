@@ -192,24 +192,20 @@ const deleteBook = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: 'Book not found!' });
   }
 
-  // Path lengkap gambar yang akan dihapus
-  const imagePath = path.join(
-    'public',
-    'images',
-    'bookImages',
-    path.basename(book.image),
-  );
+  // Ambil public_id dari URL gambar di cloudinary
+  const imageUrl = book.image;
+  const publicId = imageUrl.split('/').pop().split('.')[0]; // Mendapatkan public_id dari URL
 
-  // Hapus gambar
-  fs.unlink(imagePath, (err) => {
-    if (err) {
-      console.error('Error deleting image:', err);
-      return res.status(500).json({
-        status: 'fail',
-        message: 'Failed to delete image!',
-      });
-    }
-  });
+  // Hapus gambar dari cloudinary
+  try {
+    await cloudinary.uploader.destroy(`images/bookImages/${publicId}`);
+  } catch (error) {
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Failed to delete image from Cloudinary!',
+      error: error.message,
+    });
+  }
 
   // Hapus book
   await book.deleteOne();
