@@ -68,10 +68,9 @@ const createNewBook = asyncHandler(async (req, res) => {
 
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder,
-      resource_type: 'auto',
-      api_key,
       timestamp,
       signature,
+      api_key,
     });
     imageUrl = result.secure_url;
   } catch (error) {
@@ -82,6 +81,7 @@ const createNewBook = asyncHandler(async (req, res) => {
       error: error.message,
     });
   }
+
   // Validasi data
   if (!title || !author || !genre || !year || !description) {
     return res.status(400).json({
