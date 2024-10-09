@@ -140,11 +140,21 @@ const updateBook = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'Invalid ID!' });
   }
 
+  const book = await Book.findById(id).exec();
+
+  if (!book) {
+    return res.status(404).json({ message: 'Book not found!' });
+  }
+
   const updateData = { ...req.body };
 
   // Jika ada gambar baru, ambil pathnya
   if (req.file) {
+    const publicId = book.image.split('/').pop().split('.')[0]; // Ambil public ID gambar
     try {
+      // Hapus gambar dari cloudinary
+      await cloudinary.uploader.destroy(`images/bookImages/${publicId}`);
+
       // Upload gambar ke cloudinary
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: 'images/bookImages',
@@ -161,18 +171,18 @@ const updateBook = asyncHandler(async (req, res) => {
     }
   }
 
-  const book = await Book.findOneAndUpdate({ _id: id }, updateData, {
+  const updatedBook = await Book.findByIdAndUpdate(id, updateData, {
     new: true,
   });
 
-  if (!book) {
+  if (!updatedBook) {
     return res.status(404).json({ message: 'Book not found!' });
   }
 
   res.status(200).json({
     status: 'success',
     message: 'Book updated successfully',
-    data: book,
+    data: updatedBook,
   });
 });
 
