@@ -144,7 +144,21 @@ const updateBook = asyncHandler(async (req, res) => {
 
   // Jika ada gambar baru, ambil pathnya
   if (req.file) {
-    updateData.image = `images/bookImages/${req.file.filename}`;
+    try {
+      // Upload gambar ke cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'images/bookImages',
+        resource_type: 'image',
+      });
+      // Simpan URL gambar yang dihasilkan oleh Cloudinary ke updateData
+      updateData.image = result.secure_url;
+    } catch (error) {
+      return res.status(500).json({
+        status: 'fail',
+        message: 'Failed to upload image to Cloudinary!',
+        error: error.message,
+      });
+    }
   }
 
   const book = await Book.findOneAndUpdate({ _id: id }, updateData, {
