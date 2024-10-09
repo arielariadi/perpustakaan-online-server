@@ -3,6 +3,9 @@ import Book from '../models/bookModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 
+import fs from 'fs';
+import path from 'path';
+
 // @desc Get all books
 // @route GET /v1/books
 // @access Public
@@ -33,7 +36,7 @@ const getSingleBook = asyncHandler(async (req, res) => {
   const book = await Book.findById(id).lean();
 
   if (!book) {
-    return res.status(400).json({ message: 'Book not found!' });
+    return res.status(404).json({ message: 'Book not found!' });
   }
 
   res.status(200).json({
@@ -136,7 +139,7 @@ const updateBook = asyncHandler(async (req, res) => {
   });
 
   if (!book) {
-    return res.status(400).json({ message: 'Book not found!' });
+    return res.status(404).json({ message: 'Book not found!' });
   }
 
   res.status(200).json({
@@ -146,4 +149,50 @@ const updateBook = asyncHandler(async (req, res) => {
   });
 });
 
-export { getBooks, getSingleBook, createNewBook, updateBook };
+// @desc Delete a book
+// @route DELETE /v1/delete-book
+// @access Public
+const deleteBook = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid ID!' });
+  }
+
+  const book = await Book.findById(id).exec();
+
+  if (!book) {
+    return res.status(404).json({ message: 'Book not found!' });
+  }
+
+  // Path lengkap gambar yang akan dihapus
+  const imagePath = path.join(
+    'public',
+    'images',
+    'bookImages',
+    path.basename(book.image),
+  );
+
+  // Hapus gambar
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.error('Error deleting image:', err);
+      return res.status(500).json({
+        status: 'fail',
+        message: 'Failed to delete image!',
+      });
+    }
+  });
+
+  // Hapus book
+  await book.deleteOne();
+
+  const reply = `Buku dengan title ${book.title} telah di hapus!`;
+
+  res.status(200).json({
+    status: 'success',
+    message: reply,
+  });
+});
+
+export { getBooks, getSingleBook, createNewBook, updateBook, deleteBook };
