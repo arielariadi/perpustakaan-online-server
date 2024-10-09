@@ -3,6 +3,7 @@ import Book from '../models/bookModel.js';
 import asyncHandler from 'express-async-handler';
 import mongoose from 'mongoose';
 import cloudinary from '../utils/cloudinary.js';
+import signUpload from '../utils/signUpload.js';
 
 import fs from 'fs';
 import path from 'path';
@@ -63,19 +64,24 @@ const createNewBook = asyncHandler(async (req, res) => {
   // Upload gambar ke Cloudinary
   let imageUrl;
   try {
+    const { timestamp, signature, api_key, folder } = await signUpload();
+
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'images/bookImages',
-      resource_type: 'image', // Hanya file gambar yang diperbolehkan
+      folder,
+      resource_type: 'auto',
+      api_key,
+      timestamp,
+      signature,
     });
-    imageUrl = result.secure_url; // Dapatkan URL gambar dari hasil upload
+    imageUrl = result.secure_url;
   } catch (error) {
+    console.error('Cloudinary upload error:', error);
     return res.status(500).json({
       status: 'fail',
       message: 'Failed to upload image to Cloudinary!',
       error: error.message,
     });
   }
-
   // Validasi data
   if (!title || !author || !genre || !year || !description) {
     return res.status(400).json({
