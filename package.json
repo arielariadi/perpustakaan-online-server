@@ -2,9 +2,11 @@
   "name": "perpustakaan-online-server",
   "version": "1.0.0",
   "description": "Bagian server dari webiste perpustakaan online",
+  "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server",
+    "dev": "nodemon server"
   },
   "repository": {
     "type": "git",
@@ -15,11 +17,19 @@
   "bugs": {
     "url": "https://github.com/arielariadi/perpustakaan-online-server/issues"
   },
-  "homepage": "https://github.com/arielariadi/perpustakaan-online-server#readme",
   "dependencies": {
-    "express": "^4.21.0"
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-async-handler": "^1.2.0",
+    "mongoose": "^8.7.0",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
   }
 }
