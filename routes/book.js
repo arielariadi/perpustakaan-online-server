@@ -12,8 +12,8 @@ import {
 
 router.get('/books', getBooks);
 router.get('/books/:id', getSingleBook);
-router.post('/create-book', uploadBookImage.single('image'), createNewBook);
-router.patch('/update-book/:id', uploadBookImage.single('image'), updateBook);
-router.delete('/delete-book', deleteBook);
+router.post('/books', uploadBookImage.single('image'), createNewBook);
+router.patch('/books/:id', uploadBookImage.single('image'), updateBook);
+router.delete('/books/:id', deleteBook);
 
 export default router;

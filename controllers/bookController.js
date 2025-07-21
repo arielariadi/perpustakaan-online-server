@@ -190,7 +190,7 @@ const updateBook = asyncHandler(async (req, res) => {
 // @route DELETE /v1/delete-book
 // @access Public
 const deleteBook = asyncHandler(async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid ID!' });
